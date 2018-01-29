@@ -1,14 +1,8 @@
 #! python3
 # use a web service to look up the ip address of domains and add them to your hosts file
 
-import os, re, requests
-
-
-## url information used to look up addresses
-lookup = {}
-lookup['url'] = 'http://dig.jsondns.org/IN/'
-lookup['hostname'] = 'google.com'
-lookup['other'] = '/A'
+import os, re, requests, urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ## (path) sets the location of the file containing the hosts you want to look up
 ## (osHostsFile) is where to write the completed hosts file 
@@ -50,36 +44,52 @@ def getUrlsFromPage(input):
             page = requests.get('https://' + domain.strip('\n'), verify=False, timeout=6)
             urls = set(urlRegex.findall(page.text))
             for url in urls:
-                print(url)
+                print('+',url)
                 domainList.append(getFQDN(url))
         except Exception as e: # catch *all* exceptions
             print( "Error: %s" % e )
     return(set(domainList))
 
-def writeHostsFile(input, writemode='w'):
+
+def writeHostsFile(hostList, writemode='w'):
     hostsDict = {}
     try:
-        for host in input:
-            host = host.strip()
-            lookup['hostname'] = host
-            resp = requests.get(lookup['url'] + lookup['hostname'] + lookup['other'], verify=False, timeout=6)
-            if str(resp.status_code)[0:2] == '20':
-                for item in resp.json()['answer']:
-                    if type(item['rdata']) == str:
-                        print(item['rdata'])
-                        hostsDict[host] = item['rdata']
-                    else:
-                        print("Did not return a string:", item['rdata'])
-                        
         f = open(osHostsFile, mode=writemode, newline='\r\n')
-        for k, v in hostsDict.items():
-            print(v,k,'\n')
-            f.write(v + " " + k + "\n")
+        for host in hostList:
+            host = host.strip()
+            ip = lookupDNS(host)
+            print(ip,host,'\n')
+            f.write(ip + " " + host + "\n")
+    except Exception as e:
+        print('oh no',e)
+    f.close()
+
+def convertHostToURL(dnsName):
+    try:
+        return('https://dns.google.com/resolve?name='+dnsName)
     except Exception as e:
         print(e)
+
+def lookupDNS(dnsName):
+    try:
+        #resp = requests.get(convertHostToURL(dnsName), verify=False, timeout=6)
+        ip = ""
+        #while re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$",ip) == None:
+        resp = requests.get(convertHostToURL(dnsName), verify=False, timeout=6)
+        if str(resp.status_code)[0:2] == '20':
+            ip = resp.json()['Answer'][(len(resp.json()['Answer'])-1)]['data']
+            dnsName = ip.strip()
+            return(ip)
+    except Exception as e:
+        print('eeep',e)
+
+def appendGoSkope():
+    f = open(osHostsFile, mode='a', newline='\r\n')
+    f.write("127.0.0.1 goskope.com\n")
     f.close()
 
 writeHostsFile(hostsOutput,'w')
 domains = getUrlsFromPage(hostsOutput)
 writeHostsFile(domains,'a')
+appendGoSkope()
 
