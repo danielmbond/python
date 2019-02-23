@@ -48,7 +48,7 @@ def getTorrents(URL):
                 if (timeSinceAdded > secondsInADay and (state == 'missingFiles' or state == 'pausedUP')):
                         hashes += tHash + '|'
                         files += savePath + name + ','
-                if timeSinceAdded > secondsInAnHour and (state == 'stalledDL' or state == 'metaDL':
+                if timeSinceAdded > secondsInAnHour and (state == 'stalledDL' or state == 'metaDL'):
                         hashes += tHash + '|'
                         files += savePath + name + ','
         if len(hashes) > 0:
