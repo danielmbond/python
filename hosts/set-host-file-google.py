@@ -1,5 +1,6 @@
 #! python3
 # use a web service to look up the ip address of domains and add them to your hosts file
+# give whatever account that will run this access to your hosts file
 
 import os, re, requests, urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -24,12 +25,12 @@ if not os.path.isfile(path):
     f.write ('facebook.com\n')
     f.write('gmail.com\n')
     f.close()
-else:
-    with open(path,'r') as f:
-        hostsOutput = []
-        for line in f:
-            hostsOutput.append(line)
-        f.close()
+
+hostsOutput = []
+with open(path,'r') as f:
+    for line in f:
+        hostsOutput.append(line)
+    f.close()
 
 def getFQDN(url):
     return(url.replace('https:','').replace('/',''))
