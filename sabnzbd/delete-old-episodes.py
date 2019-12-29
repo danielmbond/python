@@ -1,16 +1,41 @@
 #! python3
 
-# Clean up the orphaned sabnzbd files, delete everything that isn't a mp4 of m4v
+# Clean up the orphaned sabnzbd files, delete
+# everything that isn't a mp4 of m4v
 
-import os, sys 
+import os
+import sys
 
+BASE_PATH = r'D:\TV'
 
-EPISODES_TO_KEEP = 5
-SABNZBD_COMPLETE_DIR = r'C:\Users\Daniel\Downloads\complete'
-BASE_PATH = r'H:\TV'
+# Show Name : Episodes to Keep
+shows = {'60 Minutes': 5,
+         'American Idol': 20,
+         'Anthony Bourdain- Parts Unknown': 25,
+         'Conan (2010)': 5,
+         'Cops': 25,
+         'Court Cam': 10,
+         'Full Frontal With Samantha Bee': 5,
+         'Jimmy Kimmel Live': 5,
+         'Judge Judy': 5,
+         'Last Week Tonight with John Oliver': 5,
+         'Law & Order- Special Victims Unit': 15,
+         'Law & Order- True Crime': 15,
+         'Lip Sync Battle': 5,
+         'Live Pd': 10,
+         'Live PD- Police Patrol': 5,
+         'Live PD - Wanted': 5,
+         'Live PD- Women on Patrol': 5,
+         'Live Rescue': 1,
+         'PD Cam': 5,
+         'Saturday Night Live': 15,
+         'The Daily Show': 5,
+         'The Masked Singer': 5,
+         'Top Chef': 15,
+         'Tosh 0': 25,
+         'Vice': 5
+         }
 
-shows = ['Saturday Night Live','Conan (2010)','Jimmy Kimmel Live','The Daily Show',
-         'Full Frontal With Samantha Bee']
 
 def creation_date(path_to_file):
     """
@@ -29,41 +54,23 @@ def creation_date(path_to_file):
             # so we'll settle for when its content was last modified.
             return stat.st_mtime
 
-for show in shows:
-    directory = os.path.join(BASE_PATH, show)
-    print(directory)
-    if os.path.isdir(directory) == True:
-        for root, dirs, files in os.walk(directory):
-            count = 0
-            for name in sorted(files, key=lambda name:
-                os.path.getmtime(os.path.join(root, name)), reverse=(True)):
-                    if count > 4:
-                        f = os.path.join(root,name)
+
+def deleteShows(BASE_PATH=BASE_PATH, shows=shows):
+    for show in shows:
+        directory = os.path.join(BASE_PATH, show)
+        print(directory)
+        if os.path.isdir(directory) is True:
+            for root, dirs, files in os.walk(directory):
+                count = 0
+                for name in sorted(files, key=lambda name:
+                                   os.path.getmtime(os.path.join(root, name)),
+                                   reverse=(True)):
+                    if count > shows[show]-1:
+                        f = os.path.join(root, name)
                         print(f)
                         os.remove(f)
                     count += 1
-                    
-##print(f)
-##def directoryToFileName(fileFullname):
-##    lastDirectory = os.path.basename(os.path.dirname(fileFullname)).strip()
-##    fileExtension = os.path.splitext(fileFullname)[1]
-##    return(lastDirectory + fileExtension)
-##
-##for root, dirs, files in os.walk(SABNZBD_COMPLETE_DIR):
-##    if(dirs == [] and files == []):
-##        os.rmdir(root)
-##        continue
-##    for name in files:
-##        file = os.path.join(root, name)
-##        fileSize = os.path.getsize(file)/1024/1024
-##        if not "UNPACK" in file:
-##            if not file.endswith(".mp4") and not file.endswith(".m4v") or fileSize < 20:
-##                print("Deleting", name, fileSize)
-##                os.remove(file)
-##                continue
-##            else:
-##                try:
-##                    os.rename(file,os.path.join(SABNZBD_COMPLETE_DIR,directoryToFileName(file)))
-##                    print("RENAME", file, os.path.join(SABNZBD_COMPLETE_DIR,directoryToFileName(file)))
-##                except:
-##                    continue
+
+
+deleteShows()
+deleteShows(r'H:\TV')
