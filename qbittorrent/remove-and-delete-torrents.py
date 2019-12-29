@@ -1,7 +1,7 @@
 #! python3
 # remove torrents from qbittorrent
 
-import os, requests, time, datetime
+import datetime, os, requests, time
 ##urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 API_BASE = r'http://127.0.0.1:7700/api/v2/torrents/'
