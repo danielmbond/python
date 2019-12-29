@@ -20,7 +20,7 @@ class Solution:
          
         res.append(intervals[0])
         #scan the list
-        for i in xrange(1,len(intervals)):
+        for i in range(1,len(intervals)):
             cur = intervals[i]
             pre = res[-1]
             #check if current interval intersects with previous one
