@@ -1,6 +1,6 @@
 # Remove Torrents and Files from qBittorrent
 
-Run this script removes torrents from the qBittorent client.  If the torrents are from private trackers it will force start them for the time you specify.
+This script removes torrents from the qBittorent client.  If the torrents are from private trackers it will force start them for the time you specify.
 
 ## Getting Started
 
