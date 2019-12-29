@@ -1,0 +1,11 @@
+################### FILE PATTERNS ##########################
+
+# Provide a comma-separated list of glob patterns to exclude from checks.
+exclude =
+    # git folder
+    .git,
+    # python cache
+    __pycache__,
+# Provide a comma-separate list of glob patterns to include for checks.
+filename =
+    remove-and-delete-torrents.py
