@@ -34,7 +34,7 @@ def plexScan():
     for i in sections:
         url = "http://127.0.0.1:32400/library/sections/" + \
             str(i) + "/refresh?force=1&X-Plex-Token=yAqjrc2Ef1aza1j9fZ2x"
-        r = requests.get(url)
+        requests.get(url)
 
 # Download fmpeg if it's not around
 
