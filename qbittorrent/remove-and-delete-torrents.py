@@ -62,49 +62,51 @@ def pauseTorrent(tHash, URL=None):
         print('eeep pause', e)
 
 
-    SECONDS_IN_A_DAY = 86400
-    SECONDS_IN_15_MINUTES = 900
+SECONDS_IN_A_DAY = 86400
+SECONDS_IN_15_MINUTES = 900
+files = ''
+hashes = ""
+resp = requests.get(QUERY_API, verify=False, timeout=10)
 
-    files = ''
-    hashes = ""
-    resp = requests.get(QUERY_API, verify=False, timeout=10)
+try:
+    if str(resp.status_code)[0:2] == '20':
+        json = resp.json()
+        for torrent in json:
+            addedon = torrent['added_on']
+            addedonTS = datetime.datetime.fromtimestamp(addedon)
+            forceStart = torrent['force_start']
+            name = torrent['name']
+            now = datetime.datetime.now()
+            savePath = torrent['save_path']
+            state = torrent['state']
+            tHash = torrent['hash']
+            timeActiveDays = torrent['time_active']/60/60/24
+            timeSinceAdded = (now - addedonTS).total_seconds()
+            totalSize = torrent['total_size']
 
-if str(resp.status_code)[0:2] == '20':
-    json = resp.json()
-    for torrent in json:
-        addedon = torrent['added_on']
-        addedonTS = datetime.datetime.fromtimestamp(addedon)
-        forceStart = torrent['force_start']
-        name = torrent['name']
-        now = datetime.datetime.now()
-        savePath = torrent['save_path']
-        state = torrent['state']
-        tHash = torrent['hash']
-        timeActiveDays = torrent['time_active']/60/60/24
-        timeSinceAdded = (now - addedonTS).total_seconds()
-        totalSize = torrent['total_size']
+            private = (requests.get(TRACKERS_API+'?hash='+tHash)
+                       ).json()[0]['msg']
 
-        private = (requests.get(TRACKERS_API+'?hash='+tHash)
-                   ).json()[0]['msg']
+            if forceStart is False:
+                if (private == 'This torrent is private'):
+                    forceStartTorrent(tHash)
+                if (timeSinceAdded > SECONDS_IN_A_DAY and
+                        (state == 'pausedUP' or state == 'stalledUP')):
 
-        if forceStart is False:
-            if (private == 'This torrent is private'):
-                forceStartTorrent(tHash)
-            if (timeSinceAdded > SECONDS_IN_A_DAY and
-                    (state == 'pausedUP' or state == 'stalledUP')):
-
-                hashes += tHash + '|'
-                files += savePath + name + ','
-            if (timeSinceAdded > SECONDS_IN_15_MINUTES and
-                    (state == 'missingFiles' or state == 'stalledDL' or
-                     state == 'metaDL' or state == 'uploading')):
-                hashes += tHash + '|'
-                files += savePath + name + ','
-            if totalSize > PAUSE_TORRENTS_LARGER_THAN:
-                pauseTorrent(tHash)
-        if timeActiveDays > DAYS_TO_FORCE_PRIVATE_TORRENTS:
-            forceStartTorrent(tHash, False)
-if len(hashes) > 0:
-    deleteTorrent(hashes)
-    time.sleep(5)
-    deleteFiles(files.rstrip(','))
+                    hashes += tHash + '|'
+                    files += savePath + name + ','
+                if (timeSinceAdded > SECONDS_IN_15_MINUTES and
+                        (state == 'missingFiles' or state == 'stalledDL' or
+                         state == 'metaDL' or state == 'uploading')):
+                    hashes += tHash + '|'
+                    files += savePath + name + ','
+                if totalSize > PAUSE_TORRENTS_LARGER_THAN:
+                    pauseTorrent(tHash)
+            if timeActiveDays > DAYS_TO_FORCE_PRIVATE_TORRENTS:
+                forceStartTorrent(tHash, False)
+except Exception as e:
+    print('eeep gettorrent', e)
+    if len(hashes) > 0:
+        deleteTorrent(hashes)
+        time.sleep(5)
+        deleteFiles(files.rstrip(','))
