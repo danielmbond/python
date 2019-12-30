@@ -2,7 +2,11 @@ class Solution:
     # @param A : tuple of integers
     # @return a list of integers
     def repeatedNumber(self, A):
-        B = list(A) B.sort() resultA = int(0) resultB = None result = []
+        B = list(A)
+        B.sort()
+        resultA = int(0)
+        resultB = None
+        result = []
         # print(B)
         if len(B) == 2:
             return([B[1], B[1]-1])
