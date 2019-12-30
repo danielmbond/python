@@ -1,9 +1,9 @@
 class Solution:
 
-    def maxSubArray(self,ls):
+    def maxSubArray(self, ls):
         if len(ls) == 0:
-           raise Exception("Array empty") # should be non-empty
-          
+            raise Exception("Array empty")  # should be non-empty
+
         runSum = maxSum = ls[0]
         i = 0
         start = finish = 0
@@ -20,13 +20,13 @@ class Solution:
                 start = i
                 finish = j
 
-        print ("maxSum =>", maxSum)
-        print ("start =>", start, "; finish =>", finish)
+        print("maxSum =>", maxSum)
+        print("start =>", start, "; finish =>", finish)
         return maxSum
 
-test = Solution()
-#print(test.maxSubArray((1,2,3,4)))
 
-A = (-2,1,-3,4,-1,2,1,-5,4)
-##A = (-163, -20)
+test = Solution()
+# print(test.maxSubArray((1,2,3,4)))
+
+A = (-2, 1, -3, 4, -1, 2, 1, -5, 4)
 print(test.maxSubArray(A))

@@ -16,7 +16,7 @@ class Solution:
             i += 1
         return distance
 
-            
+
 A = [-7, -13]
 B = [1, -5]
 

@@ -1,0 +1,9 @@
+autopep8 -i -r --max-line-length 100 booking.py
+autopep8 -i -r --max-line-length 100 coverPoints.py
+autopep8 -i -r --max-line-length 100 flip.py
+autopep8 -i -r --max-line-length 100 maxArr.py
+autopep8 -i -r --max-line-length 100 maxSubArray.py
+autopep8 -i -r --max-line-length 100 merge-intervals.py
+autopep8 -i -r --max-line-length 100 plusOne.py
+autopep8 -i -r --max-line-length 100 repeatedNumber.py
+autopep8 -i -r --max-line-length 100 test.py
