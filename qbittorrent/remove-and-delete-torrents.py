@@ -12,11 +12,11 @@ API_BASE = r'http://127.0.0.1:7700/api/v2/torrents/'
 DAYS_TO_FORCE_PRIVATE_TORRENTS = 30
 PAUSE_TORRENTS_LARGER_THAN = 5000000000  # 5GB
 
-DELETE_API      = API_BASE + r'delete'
+DELETE_API = API_BASE + r'delete'
 FORCE_START_API = API_BASE + r'setForceStart'
-PAUSE_API       = API_BASE + r'pause'
-QUERY_API       = API_BASE + r'info'
-TRACKERS_API    = API_BASE + r'trackers'
+PAUSE_API = API_BASE + r'pause'
+QUERY_API = API_BASE + r'info'
+TRACKERS_API = API_BASE + r'trackers'
 
 
 def deleteFiles(files):
@@ -63,30 +63,30 @@ def pauseTorrent(tHash, URL=None):
 
 
 try:
-    SECONDS_IN_A_DAY      = 86400
+    SECONDS_IN_A_DAY = 86400
     SECONDS_IN_15_MINUTES = 900
 
     files = ''
     hashes = ""
-    resp   = requests.get(QUERY_API, verify=False, timeout=10)
+    resp = requests.get(QUERY_API, verify=False, timeout=10)
 
     if str(resp.status_code)[0:2] == '20':
         json = resp.json()
         for torrent in json:
-            addedon    = torrent['added_on']
-            addedonTS  = datetime.datetime.fromtimestamp(addedon)
+            addedon = torrent['added_on']
+            addedonTS = datetime.datetime.fromtimestamp(addedon)
             forceStart = torrent['force_start']
-            name       = torrent['name']
-            now        = datetime.datetime.now()
-            savePath   = torrent['save_path']
-            state      = torrent['state']
-            tHash      = torrent['hash']
+            name = torrent['name']
+            now = datetime.datetime.now()
+            savePath = torrent['save_path']
+            state = torrent['state']
+            tHash = torrent['hash']
             timeActiveDays = torrent['time_active']/60/60/24
             timeSinceAdded = (now - addedonTS).total_seconds()
-            totalSize  = torrent['total_size']
+            totalSize = torrent['total_size']
 
-            private    = (requests.get(TRACKERS_API+'?hash='+tHash)
-                          ).json()[0]['msg']
+            private = (requests.get(TRACKERS_API+'?hash='+tHash)
+                       ).json()[0]['msg']
 
             if forceStart is False:
                 if (private == 'This torrent is private'):
