@@ -49,7 +49,7 @@ def send_post(session, url, params):
 
 def force_start_torrent(session, t_hash, start=True):
     """Force start or stop a torrent."""
-    send_request(session, FORCE_START_API, {"hashes": t_hash, "value": start})
+    send_post(session, FORCE_START_API, {"hashes": t_hash, "value": start})
 
 def delete_torrent(session, t_hash, delete_files=True):
     """Delete a torrent."""
