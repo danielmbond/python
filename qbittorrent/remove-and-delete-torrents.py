@@ -49,7 +49,7 @@ def send_post(session, url, params):
 
 def force_start_torrent(session, t_hash, start=True):
     """Force start or stop a torrent."""
-    send_request(session, FORCE_START_API, {"hashes": t_hash, "value": "true"})
+    send_request(session, FORCE_START_API, {"hashes": t_hash, "value": start})
 
 def delete_torrent(session, t_hash, delete_files=True):
     """Delete a torrent."""
@@ -94,7 +94,7 @@ def process_torrents():
 
                 if not torrent['force_start']:
                     if private == 'This torrent is private':
-                        force_start_torrent(session, t_hash)
+                        force_start_torrent(session, t_hash, True)
                     if time_since_added > SECONDS_IN_A_DAY and state in ['pausedUP', 'stalledUP']:
                         hashes += t_hash + '|'
                         files += save_path + name + ','
